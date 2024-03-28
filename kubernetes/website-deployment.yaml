@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ecomweb
+  name: ecomweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecomweb
+  template:
+    metadata:
+      labels:
+        app: ecomweb
+    spec:
+      containers:
+      - image: kryten6/ecom-web:dark@sha256:edfe6c35016e2a5bd0ded279c0de433b046a37bafa7028b53aa8060769a180db
+        name: ecom-web
+        imagePullPolicy: Always
+        env:
+          - name: DB_HOST
+            value: mysql-service
+          - name: DB_USER
+            value: ecomuser
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-creds
+                key: DB_PASSWORD
+          - name: DB_NAME
+            value: ecomdb
+          - name: FEATURE_DARK_MODE
+            valueFrom:
+              configMapKeyRef:
+                name: feature-toggle-config
+                key: FEATURE_DARK_MODE
+        ports:
+          - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /live.php
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 60
+        readinessProbe:
+          httpGet:
+            path: /ready.php
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 60
+      - image: mariadb:latest
+        name: ecom-db
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql-creds
+                key: MYSQL_ROOT_PASSWORD
+        ports:
+          - containerPort: 3306
+        volumeMounts:
+          - name: db-load-script
+            mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: db-load-script
+          configMap:
+            name: db-load-script
