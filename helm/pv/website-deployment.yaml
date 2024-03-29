@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ecomweb
+  name: {{ .Release.Name }}-ecomweb
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: ecomweb
+  template:
+    metadata:
+      labels:
+        app: ecomweb
+    spec:
+      containers:
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        name: ecom-web
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+          - name: DB_HOST
+            value: mysql-service
+          - name: DB_USER
+            value: ecomuser
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-creds
+                key: DB_PASSWORD
+          - name: DB_NAME
+            value: ecomdb
+          - name: FEATURE_DARK_MODE
+            valueFrom:
+              configMapKeyRef:
+                name: feature-toggle-config
+                key: FEATURE_DARK_MODE
+        ports:
+          - containerPort: {{ .Values.ports.web }}
+        livenessProbe:
+          httpGet:
+            path: /live.php
+            port: {{ .Values.ports.web }}
+          initialDelaySeconds: 10
+          periodSeconds: 60
+        readinessProbe:
+          httpGet:
+            path: /ready.php
+            port: {{ .Values.ports.web }}
+          initialDelaySeconds: 10
+          periodSeconds: 60
+      - image: {{ .Values.image.db_repository }}:{{ .Values.image.db_tag }}
+        name: {{ .Release.Name }}-ecom-db
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql-creds
+                key: MYSQL_ROOT_PASSWORD
+        ports:
+          - containerPort: {{ .Values.ports.db }}
+        volumeMounts:
+          - name: db-load-script
+            mountPath: /docker-entrypoint-initdb.d
+          - name: k8s-resume-pv-volume 
+            mountPath: "/tmp/"
+      volumes:
+        - name: db-load-script
+          configMap:
+            name: db-load-script
+        - name: k8s-resume-pv-volume
+          persistentVolumeClaim:
+            claimName: k8s-resume-pv-claim
