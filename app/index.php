@@ -29,6 +29,11 @@
           <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
           <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
+        <!-- Dark Mode CSS (conditional) -->
+        <?php if ($_ENV['FEATURE_DARK_MODE'] == 'true') { ?>
+            <link href="css/dark-theme.css" rel="stylesheet">
+        <?php } ?>
+
     </head>
     <body>
         <!--==========Main Header==========-->
@@ -151,16 +156,11 @@
                     }
                   ?>
 
-
             </div>
         </section>
 
-
         <footer class="footer_area row">
             <div class="container custom-container">
-
-
-
                 <div class="copy_right_area">
                     <h4 class="copy_right">© Copyright 2019 Kodekloud Ecommerce | All Rights Reserved</h4>
                 </div>
