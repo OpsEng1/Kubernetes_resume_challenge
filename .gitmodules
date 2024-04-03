@@ -1,0 +1,6 @@
+[submodule "app/learning-app-ecommerce"]
+	path = app/learning-app-ecommerce
+	url = https://github.com/kodekloudhub/learning-app-ecommerce.git
+[submodule "learning-app-ecommerce"]
+	path = learning-app-ecommerce
+	url = https://github.com/kodekloudhub/learning-app-ecommerce.git
