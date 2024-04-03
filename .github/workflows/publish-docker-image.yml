@@ -1,0 +1,20 @@
+name: Docker image to Docker Hub
+
+on:
+  [workflow_dispatch]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag kryten6/ecom-web:latest
+    - name: publish
+      run: |
+        docker login -u kryten6 -p ${{ secrets.DOCKER_HUB_TOKEN }}
+        docker push kryten6/ecom-web:latest
