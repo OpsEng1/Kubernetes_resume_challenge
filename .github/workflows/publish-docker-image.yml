@@ -19,11 +19,6 @@ jobs:
         docker login -u kryten6 -p ${{ secrets.DOCKER_HUB_TOKEN }}
         docker push kryten6/ecom-web:latest
 
-    # Setup gcloud CLI
-    - id: 'auth'
-      uses: 'google-github-actions/auth@v3'
-      with:
-        credentials_json: '${{ secrets.GKE_SA_KEY }}'
 
     # Get the GKE credentials so we can deploy to the cluster
     - uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
