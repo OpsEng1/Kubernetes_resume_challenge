@@ -23,7 +23,7 @@ jobs:
       run: |
         docker login -u kryten6 -p ${{ secrets.DOCKER_HUB_TOKEN }}
         docker push kryten6/ecom-web:latest
-    steps:
+
     - name: Checkout
       uses: actions/checkout@v3
 
