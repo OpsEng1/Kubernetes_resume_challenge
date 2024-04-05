@@ -3,6 +3,11 @@ name: Docker image to Docker Hub
 on:
   [workflow_dispatch]
 
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: standard-cluster-1    # TODO: update to cluster name
+  GKE_ZONE: europe-north1-a  # TODO: update to cluster zone
+
 jobs:
 
   build:
@@ -18,14 +23,22 @@ jobs:
       run: |
         docker login -u kryten6 -p ${{ secrets.DOCKER_HUB_TOKEN }}
         docker push kryten6/ecom-web:latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
 
+    # Alternative option - authentication via credentials json
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GK_SA_KEY }}'
 
     # Get the GKE credentials so we can deploy to the cluster
-    - uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
+    - name: Set up GKE credentials
+      uses: google-github-actions/get-gke-credentials@v0
       with:
         cluster_name: ${{ env.GKE_CLUSTER }}
         location: ${{ env.GKE_ZONE }}
-        credentials: ${{ secrets.GKE_SA_KEY }}
 
     # Deploy the Docker image to the GKE cluster
     - name: Deploy to GKE
