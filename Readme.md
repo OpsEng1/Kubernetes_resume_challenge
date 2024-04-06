@@ -7,3 +7,4 @@ I've had so much fun. These are my highlights:
 3. Spent some time playing around with Liveness/Readiness probes, troubleshooting why it couldn't contact the endpoints in a timely manner
 4. Of course, refreshing my memory on the wonderful world of Kubernetes after passing the CKA exam last year
 5. Fun learning Helm - I can see why it's popular!
+6. Github Actions - Had fun learning how to use this to change an image of a running deployment
