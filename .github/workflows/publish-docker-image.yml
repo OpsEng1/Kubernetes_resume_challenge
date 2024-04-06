@@ -1,7 +1,8 @@
 name: Docker image to Docker Hub
 
 on:
-  [workflow_dispatch]
+  push:
+    branches: [ "main" ]
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
