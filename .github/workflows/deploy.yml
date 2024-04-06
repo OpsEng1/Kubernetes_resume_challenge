@@ -1,4 +1,4 @@
-name: Docker image to Docker Hub
+name: Publish Docker image to Docker Hub and Deploy to GKE
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: standard-cluster-1    # TODO: update to cluster name
-  GKE_ZONE: europe-north1-a  # TODO: update to cluster zone
+  GKE_CLUSTER: standard-cluster-1 
+  GKE_ZONE: europe-north1-a 
 
 jobs:
 
@@ -19,11 +19,11 @@ jobs:
     - name: checkout
       uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag kryten6/ecom-web:latest
+      run: docker build . --file Dockerfile --tag kryten6/ecom-web:${{ github.run_number }}
     - name: publish
       run: |
         docker login -u kryten6 -p ${{ secrets.DOCKER_HUB_TOKEN }}
-        docker push kryten6/ecom-web:latest
+        docker push kryten6/ecom-web:${{ github.run_number }}
 
     - name: Checkout
       uses: actions/checkout@v3
@@ -52,4 +52,5 @@ jobs:
       run: |-
         # Test commands
         kubectl get services -o wide
-        helm upgrade v1 ${{ secrets.HELM_CHART_LOCATION }} --set image.repository=kryten6/ecom-web --set image.tag=latest
+        #helm upgrade v1 ${{ secrets.HELM_CHART_LOCATION }} --set image.repository=kryten6/ecom-web --set image.tag=latest
+        kubectl set image deployment/v1-ecomweb ecom-web=kryten6/ecom-web:${{ github.run_number }}
