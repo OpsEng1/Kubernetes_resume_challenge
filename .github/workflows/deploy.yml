@@ -45,4 +45,4 @@ jobs:
     - name: Deploy to GKE
       run: |-
         # Update image of deployment. My deployment starts with {{ .Release.Name }}-ecomweb as defined in weh website deployment yaml file. We can clean this up rather than hardcoded like below
-        kubectl set image deployment/{{ .Release.Name }}-ecomweb ecom-web=kryten6/ecom-web:${{ github.run_number }}
+        kubectl set image deployment/v1-ecomweb ecom-web=kryten6/ecom-web:${{ github.run_number }}
