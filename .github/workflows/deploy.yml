@@ -3,6 +3,8 @@ name: Publish Docker image to Docker Hub and Deploy to GKE
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'app/**'
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
