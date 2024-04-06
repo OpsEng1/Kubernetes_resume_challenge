@@ -28,12 +28,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Install Helm
-      run: |
-        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-        chmod 700 get_helm.sh
-        ./get_helm.sh
-
     # Alternative option - authentication via credentials json
     - id: 'auth'
       uses: 'google-github-actions/auth@v0'
@@ -50,7 +44,5 @@ jobs:
     # Deploy the Docker image to the GKE cluster
     - name: Deploy to GKE
       run: |-
-        # Test commands
-        kubectl get services -o wide
-        #helm upgrade v1 ${{ secrets.HELM_CHART_LOCATION }} --set image.repository=kryten6/ecom-web --set image.tag=latest
-        kubectl set image deployment/v1-ecomweb ecom-web=kryten6/ecom-web:${{ github.run_number }}
+        # Update image of deployment. My deployment starts with {{ .Release.Name }}-ecomweb as defined in weh website deployment yaml file. We can clean this up rather than hardcoded like below
+        kubectl set image deployment/{{ .Release.Name }}-ecomweb ecom-web=kryten6/ecom-web:${{ github.run_number }}
